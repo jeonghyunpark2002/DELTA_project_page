@@ -1,389 +1,196 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="description" content="Enhancing Multilingual RAG Systems with Debiased Language Preference-Guided Query Fusion">
-  <meta name="keywords" content="DeLP, DELTA, Multilingual RAG, mRAG, Language Preference, ACL 2026, NLP">
+  <meta name="description" content="DELTA: Enhancing Multilingual RAG Systems with Debiased Language Preference-Guided Query Fusion">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DELTA | ACL 2026</title>
+  <title>DELTA | ACL 2026 Findings</title>
   <link rel="icon" href="https://fav.farm/🌐" />
-
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
-  <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="./static/css/index.css">
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
   <style>
-    .hero { background: linear-gradient(135deg, #f0f7ff 0%, #e6f0fb 100%); }
-    .section-title { border-left: 4px solid #2366d1; padding-left: 0.75rem; margin-bottom: 1.5rem; }
-    .stat-box { background:white; border:2px solid #dbeafe; border-radius:12px; padding:1.25rem; text-align:center; box-shadow:0 2px 8px rgba(35,102,209,0.08); }
-    .stat-number { font-size:2.2rem; font-weight:800; color:#2366d1; line-height:1; }
-    .stat-label { font-size:0.88rem; color:#555; margin-top:0.3rem; }
-    .tag-pill { display:inline-block; background:#dbeafe; color:#1e40af; border-radius:20px; padding:3px 12px; font-size:0.9em; margin:3px; font-weight:500; }
-    .prior-card { border:1.5px solid #e0e7ff; border-radius:10px; padding:1.25rem; background:#fafbff; margin-bottom:1rem; }
-    .prior-card .pname { font-weight:700; color:#1e40af; font-size:1.05em; }
-    .prior-tag { display:inline-block; background:#dbeafe; color:#1e40af; border-radius:4px; padding:1px 8px; font-size:0.8em; font-weight:600; margin-left:6px; font-family:monospace; }
-    .bibtex-box { background:#1e1e2e; color:#cdd6f4; border-radius:8px; padding:1.5rem; font-family:'Courier New',monospace; font-size:0.85em; line-height:1.6; white-space:pre; overflow-x:auto; }
-    .result-table th { background:#f0f4ff; font-weight:700; }
-    .result-table td, .result-table th { padding:0.45rem 0.6rem; text-align:center; font-size:0.88em; }
-    .best { font-weight:700; }
-    .second { text-decoration:underline; }
-    .ours-row { background:#fffde7 !important; }
-    .model-row td { background:#e8f0fe; font-weight:700; font-style:italic; color:#1e40af; text-align:left; padding-left:0.75rem; }
-    .doc-row td { background:#f3f4f6; font-style:italic; color:#555; font-size:0.85em; text-align:center; }
-    .figure-caption { font-size:0.9em; color:#555; margin-top:0.5rem; text-align:center; }
-    .seg-block { font-family:monospace; background:#f0f4ff; border:1.5px solid #c7d9ff; border-radius:6px; padding:0.5rem 1rem; margin:0.4rem 0; font-size:0.93em; }
-    .seg-label { font-weight:700; color:#1e40af; }
-    .highlight-box { background:#e0f2fe; border-radius:10px; padding:1.25rem 1.5rem; border-left:4px solid #0284c7; margin:1.5rem 0; }
+    :root{--ink:#111;--ink2:#555;--ink3:#888;--bg:#fff;--wash:#f6f6f4;--line:#e3e3df;--ac:#1a56db;--ac2:#d4650e;--glow:#eef4ff;--serif:'Instrument Serif',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;--mw:860px}
+    *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+    body{font-family:var(--sans);color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.72;-webkit-font-smoothing:antialiased}
+    header{background:var(--ink);color:#fff;padding:52px 24px 48px;text-align:center}
+    .badge{display:inline-block;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;border:1px solid rgba(255,255,255,.25);padding:5px 18px;border-radius:100px;margin-bottom:24px;color:rgba(255,255,255,.65)}
+    header h1{font-family:var(--serif);font-weight:400;font-style:italic;font-size:clamp(1.85rem,4.2vw,2.6rem);line-height:1.22;max-width:740px;margin:0 auto 20px}
+    .al{font-size:.95rem;color:rgba(255,255,255,.6);margin-bottom:4px;line-height:1.8}
+    .al a{color:rgba(255,255,255,.85);text-decoration:none;font-weight:500}.al a:hover{text-decoration:underline}
+    .af{font-size:.82rem;color:rgba(255,255,255,.4);margin-bottom:26px}
+    .lks{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+    .lb{display:inline-flex;align-items:center;gap:6px;font-size:.85rem;font-weight:600;padding:9px 20px;border-radius:6px;text-decoration:none;transition:all .15s}
+    .lb.f{background:#fff;color:var(--ink)}.lb.f:hover{background:var(--glow);transform:translateY(-1px)}
+    .lb.g{border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7)}.lb.g:hover{border-color:rgba(255,255,255,.5);color:#fff}
+    .lb svg{width:15px;height:15px;flex-shrink:0}
+    .met{display:grid;grid-template-columns:repeat(4,1fr);max-width:var(--mw);margin:-26px auto 0;padding:0 24px;position:relative;z-index:2;gap:12px}
+    .mc{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:18px 12px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+    .mv{font-family:var(--serif);font-style:italic;font-size:1.65rem;color:var(--ac);line-height:1}
+    .ml{font-size:.72rem;color:var(--ink3);margin-top:5px;line-height:1.3}
+    @media(max-width:600px){.met{grid-template-columns:1fr 1fr}}
+    .w{max-width:var(--mw);margin:0 auto;padding:0 24px}
+    section{padding:54px 0}section+section{border-top:1px solid var(--line)}.sh{background:var(--wash)}
+    h2{font-family:var(--serif);font-weight:400;font-size:1.6rem;margin-bottom:16px}
+    h3{font-size:1rem;font-weight:600;margin:24px 0 8px}
+    p+p{margin-top:12px}p{text-align:justify}
+    figure{margin:28px 0;text-align:center}
+    figure img{max-width:100%;border-radius:8px;border:1px solid var(--line)}
+    figcaption{font-size:.82rem;color:var(--ink3);margin-top:8px;line-height:1.5}figcaption b{color:var(--ink2)}
+    .co{margin:24px 0;padding:18px 20px;border-radius:8px;font-size:.92rem;line-height:1.65}
+    .co.b{background:var(--glow);border-left:3px solid var(--ac)}.co.b b{color:var(--ac)}
+    .co.o{background:#fff8f0;border-left:3px solid var(--ac2)}.co.o b{color:var(--ac2)}
+    .tri{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0}
+    .tc{padding:18px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+    .tc .i{font-size:1.4rem;margin-bottom:6px}
+    .tc h4{font-size:.92rem;font-weight:600;margin-bottom:4px}
+    .tc p{font-size:.83rem;color:var(--ink2);text-align:left}
+    @media(max-width:600px){.tri{grid-template-columns:1fr}}
+    .sg{font-family:var(--mono);font-size:.82rem;background:var(--wash);border:1px solid var(--line);border-radius:5px;padding:7px 12px;margin:4px 0;display:flex;gap:10px;align-items:baseline}
+    .sg b{color:var(--ac);white-space:nowrap}.sg span{font-family:var(--sans);color:var(--ink2);font-size:.84rem}
+    .fm{background:var(--wash);border:1px solid var(--line);border-radius:8px;padding:16px 20px;margin:18px 0;text-align:center;overflow-x:auto}
+    .cg{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;margin:12px 0;font-size:.88rem}
+    .cg li{list-style:none;padding-left:16px;position:relative}.cg li::before{content:'→';position:absolute;left:0;color:var(--ac);font-weight:600}
+    .tw{overflow-x:auto;margin:22px 0;border-radius:8px;border:1px solid var(--line)}
+    table{width:100%;border-collapse:collapse;font-size:.79rem;background:var(--bg)}
+    thead th{background:var(--ink);color:#fff;font-weight:600;padding:9px 7px;text-align:center;white-space:nowrap;font-size:.78rem}
+    td{padding:6px 7px;text-align:center;border-bottom:1px solid #f0f0ec}
+    .bb{font-weight:700}.uu{text-decoration:underline;text-underline-offset:2px}
+    .ours td{background:#fffde7;font-weight:600}
+    .mh td{background:#f0f3fa;font-weight:700;font-style:italic;color:var(--ac);text-align:left;padding-left:10px;font-size:.83rem}
+    .lh td{background:#fafaf8;font-style:italic;color:var(--ink3);font-size:.78rem;text-align:center}
+    .tn{font-size:.76rem;color:var(--ink3);text-align:center;margin-top:6px}
+    .wl{margin:10px 0;font-size:.9rem}.wl li{list-style:none;padding:5px 0;border-bottom:1px solid #f0f0ec}.wl li:last-child{border:none}
+    .wl code{font-family:var(--mono);font-size:.82em;background:var(--wash);padding:1px 6px;border-radius:3px}
+    .bib{background:#1a1a1a;color:#bbb;border-radius:8px;padding:20px 22px;font-family:var(--mono);font-size:.8rem;line-height:1.7;overflow-x:auto;white-space:pre;position:relative}
+    .bib button{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.08);color:#999;border:none;border-radius:5px;padding:4px 10px;font-size:.72rem;cursor:pointer;font-family:var(--sans)}
+    .bib button:hover{background:rgba(255,255,255,.15);color:#ddd}
+    footer{text-align:center;padding:32px 24px;font-size:.8rem;color:var(--ink3);border-top:1px solid var(--line)}
+    footer a{color:var(--ac);text-decoration:none}footer a:hover{text-decoration:underline}
+    @keyframes ri{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    header h1,header .al,header .af,header .lks,.badge{animation:ri .55s ease-out both}
+    header .al{animation-delay:.06s}header .af{animation-delay:.1s}header .lks{animation-delay:.16s}
   </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar" role="navigation" style="background:white; border-bottom:1px solid #eee;">
-  <div style="display:flex; justify-content:center; width:100%; padding:0.6rem 0;">
-    <a href="https://ai.cau.ac.kr/" target="_blank" style="font-weight:700; font-size:1.05em; color:#333; text-decoration:none;">
-      Department of Artificial Intelligence · Chung-Ang University
-    </a>
+<header>
+  <div class="badge">ACL 2026 · Findings</div>
+  <h1>Enhancing Multilingual RAG Systems with Debiased Language Preference-Guided Query Fusion</h1>
+  <div class="al"><a href="#">Jeonghyun Park</a>,&ensp;<a href="#">Byeongjeong Kim</a>,&ensp;<a href="#">Seojin Hwang</a>,&ensp;<a href="#">Hwanhee Lee</a><sup style="font-size:.7em">†</sup></div>
+  <div class="af"><sup>†</sup>Corresponding Author &ensp;·&ensp; Dept. of AI, Chung-Ang University</div>
+  <div class="lks">
+    <a class="lb f" href="https://arxiv.org/pdf/2601.02956" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Paper</a>
+    <a class="lb f" href="https://arxiv.org/abs/2601.02956" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>arXiv</a>
+    <a class="lb g" href="#" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>Code</a>
   </div>
-</nav>
+</header>
 
-<!-- Hero -->
-<section class="hero">
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered">
-        <div class="column has-text-centered">
+<section><div class="w">
+  <h2>Abstract</h2>
+  <p>Multilingual Retrieval-Augmented Generation (mRAG) systems often exhibit a perceived preference for high-resource languages—particularly English—resulting in the widespread adoption of English pivoting. While prior studies attribute this advantage to the superior English-centric capabilities of LLMs, we find that such measurements are significantly distorted by <b>structural priors</b> inherent in evaluation benchmarks.</p>
+  <p>We identify <i>exposure bias</i>, a <i>gold availability prior</i>, and <i>cultural priors</i> as factors that hinder accurate assessment. To address these, we propose <b>DeLP</b>, a calibrated metric revealing that retrievers fundamentally favor <b>monolingual alignment</b>. Building on this, we introduce <b>DELTA</b>, a lightweight mRAG framework that consistently outperforms English pivoting and mRAG baselines across diverse languages.</p>
+</div></section>
 
-          <div style="margin-bottom:1rem;">
-            <span class="tag-pill">ACL 2026</span>
-            <span class="tag-pill">Multilingual RAG</span>
-            <span class="tag-pill">Language Preference</span>
-            <span class="tag-pill">Query Augmentation</span>
-          </div>
-
-          <h1 class="title is-3 publication-title">
-            Enhancing Multilingual RAG Systems with<br>Debiased Language Preference-Guided Query Fusion
-          </h1>
-
-          <div class="is-size-5 publication-authors" style="margin-top:1rem;">
-            <span class="author-block">Jeonghyun Park,&nbsp;</span>
-            <span class="author-block">Byeongjeong Kim,&nbsp;</span>
-            <span class="author-block">Seojin Hwang,&nbsp;</span>
-            <span class="author-block">Hwanhee Lee<sup>†</sup></span>
-          </div>
-          <div class="is-size-6" style="color:#666; margin-top:0.4rem;"><sup>†</sup>Corresponding Author</div>
-          <div class="is-size-5 publication-authors" style="margin-top:0.5rem;">
-            <span class="author-block">Department of Artificial Intelligence, Chung-Ang University</span>
-          </div>
-
-          <!-- Links -->
-          <div style="margin-top:1.25rem;">
-            <span class="link-block">
-              <a href="#" class="external-link button is-normal is-rounded is-dark">
-                <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
-              </a>
-            </span>
-            <span class="link-block">
-              <a href="#" class="external-link button is-normal is-rounded is-dark">
-                <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
-              </a>
-            </span>
-            <span class="link-block">
-              <a href="#" class="external-link button is-normal is-rounded is-dark">
-                <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
-              </a>
-            </span>
-          </div>
-
-        </div>
-      </div>
-    </div>
+<section class="sh"><div class="w">
+  <h2>The Myth of English Preference</h2>
+  <p>We challenge the assumption that English pivoting works due to English-centric LLM capabilities, showing the gains stem from <b>retrieval-side structural biases</b>.</p>
+  <figure><img src="./static/images/fig_motivation.png" alt="Motivation"><figcaption><b>Figure 1.</b> Common causes of language preference in mRAG: gold-availability prior and cultural prior.</figcaption></figure>
+  <div class="tri">
+    <div class="tc"><div class="i">📊</div><h4>Exposure Bias</h4><p>High-resource corpora dominate top retrieval results regardless of the encoder's linguistic intent—a "popularity bias" that artificially inflates English performance.</p></div>
+    <div class="tc"><div class="i">📌</div><h4>Gold Availability Prior</h4><p>For most queries, English Wikipedia is the sole repository of ground-truth. Retrieval is forced into English because local-language gold doesn't exist.</p></div>
+    <div class="tc"><div class="i">🌏</div><h4>Cultural Prior</h4><p>Locale-tied queries contain native surface forms that act as retrieval anchors. A language appears "preferred" due to topic locality, not model tendency.</p></div>
   </div>
-</section>
+  <div class="co b"><b>Key Finding:</b> On MKQA, for Arabic and Korean, over <b>65% of gold passages exist only in English Wikipedia</b>. English pivoting works because the evidence only exists in English.</div>
+</div></section>
 
-<!-- TL;DR -->
-<section class="section" style="padding:2rem 1.5rem; background:#f0f7ff;">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered is-vcentered">
-      <div class="column is-3"><div class="stat-box"><div class="stat-number">3</div><div class="stat-label">Structural Priors Identified (Exposure, Gold Availability, Cultural)</div></div></div>
-      <div class="column is-3"><div class="stat-box"><div class="stat-number">DeLP</div><div class="stat-label">Debiased Language Preference Metric</div></div></div>
-      <div class="column is-3"><div class="stat-box"><div class="stat-number">DELTA</div><div class="stat-label">Lightweight Query-Level mRAG Framework</div></div></div>
-      <div class="column is-3"><div class="stat-box"><div class="stat-number">7</div><div class="stat-label">Languages Evaluated (ar, de, es, ja, ko, th, zh)</div></div></div>
-    </div>
-  </div>
-</section>
+<section><div class="w">
+  <h2>DeLP: Debiased Language Preference</h2>
+  <p><b>DeLP</b> regresses out structural confounds via ridge regression. The residual is the true debiased preference.</p>
+  <figure><img src="./static/images/fig_delp.png" alt="DeLP"><figcaption><b>Figure 2.</b> DeLP measures intrinsic language preference by regressing out exposure, gold-availability, and cultural priors.</figcaption></figure>
+  <h3>Prior Feature Vector</h3>
+  <p>For each language pair \((L_q, L_d)\), we stack covariates:</p>
+  <ul class="cg">
+    <li>\(p_\text{ret}(L_d \mid L_q)\) — exposure prior</li>
+    <li>\(p_\text{db}(L_d)\) — corpus-size prior</li>
+    <li>\(\ell(L_d)\) — passage-length stat</li>
+    <li>\(p_\text{gold}(L_q, L_d)\) — gold-availability</li>
+    <li>\(p_\text{cult}(L_d)\) — cultural prior</li>
+    <li>\(\mathbb{I}[L_q = L_d]\) — monolingual indicator</li>
+  </ul>
+  <div class="fm">\[ \mathrm{DeLP}_e(L_q, L_d) = s_e(L_q, L_d) - \phi(L_q, L_d)^\top \hat\beta_e + \mu_e \]</div>
+  <div class="co o"><b>Monolingual Alignment Emerges:</b> After calibration, the strongest signal moves to the diagonal (\(L_q = L_d\)). The dominant English preference disappears—retrievers fundamentally favor <b>monolingual alignment</b>.</div>
+</div></section>
 
-<!-- Abstract -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3 has-text-centered">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-            Multilingual Retrieval-Augmented Generation (mRAG) systems often exhibit a perceived preference for high-resource languages—particularly English—resulting in the widespread adoption of English pivoting. While prior studies attribute this advantage to the superior English-centric capabilities of LLMs, we find that such measurements are significantly distorted by <strong>structural priors</strong> inherent in evaluation benchmarks.
-          </p>
-          <p>
-            Specifically, we identify <em>exposure bias</em> and a <em>gold availability prior</em>—both driven by the disproportionate concentration of resources in English—as well as <em>cultural priors</em> rooted in topic locality, as factors that hinder accurate assessment of genuine language preference.
-          </p>
-          <p>
-            To address these biases, we propose <strong>DeLP</strong> (<strong>De</strong>biased <strong>L</strong>anguage <strong>P</strong>reference), a calibrated metric that explicitly factors out these structural confounds. Our analysis reveals that retrievers fundamentally favor <strong>monolingual alignment</strong> between the query and document language. Building on this insight, we introduce <strong>DELTA</strong> (<strong>DE</strong>biased <strong>L</strong>anguage preference–guided <strong>T</strong>ext <strong>A</strong>ugmentation), a lightweight and efficient mRAG framework that consistently outperforms English pivoting and mRAG baselines across diverse languages.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<section class="sh"><div class="w">
+  <h2>DELTA: Preference-Aligned Query Fusion</h2>
+  <p><b>DELTA</b> fuses global and local cues into a single preference-aligned query—with <b>no corpus or retriever modifications</b>.</p>
+  <figure><img src="./static/images/fig_delta.png" alt="DELTA"><figcaption><b>Figure 3.</b> DELTA fuses global and local query segments via repetition-based weighting.</figcaption></figure>
+  <h3>Fused Query Structure</h3>
+  <div class="sg"><b>[GLOB]</b><span>English pivot for broad coverage</span></div>
+  <div class="sg"><b>[LOCAL]</b><span>Native-language query for monolingual alignment</span></div>
+  <div class="sg"><b>[TITLE_BRIDGE]</b><span>Paired titles for cross-lingual entity mapping</span></div>
+  <div class="sg"><b>[ALIASES]</b><span>Global/local aliases as retrieval anchors</span></div>
+  <div class="sg"><b>[LOCALE_HINT]</b><span>Region / disambiguation hint</span></div>
+  <h3>Repetition-Based Weighting</h3>
+  <ul class="wl">
+    <li><b>Culture-specific + high confidence</b> → upweight <code>[LOCAL]</code> (3×)</li>
+    <li><b>Non-culture-specific</b> → favor <code>[GLOB]</code> (2×) for English back-off</li>
+    <li><b>High confidence</b> → duplicate <code>[TITLE_BRIDGE]</code> + <code>[ALIASES]</code></li>
+  </ul>
+</div></section>
 
-<!-- Motivation -->
-<section class="section" style="background:#f8faff;">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 section-title">🔍 The Myth of English Preference</h2>
+<section><div class="w">
+  <h2>Experiments</h2>
+  <p><b>Setup:</b> MKQA · BGE-m3 retriever/re-ranker · Top-50 → re-rank → Top-5 · Char 3-gram recall · Qwen3-235B, Gemini-2.5-Flash, DeepSeek-v3.1</p>
+  <div class="tw"><table>
+    <thead><tr><th>Method</th><th>en</th><th>ar</th><th>es</th><th>zh</th><th>ja</th><th>de</th><th>ko</th><th>th</th><th>AVG↑</th><th>Lat.↓</th></tr></thead>
+    <tbody>
+      <tr class="mh"><td colspan="11">Qwen3-235B</td></tr>
+      <tr class="lh"><td colspan="11">Document Level</td></tr>
+      <tr><td>MultiRAG</td><td class="uu">70.05</td><td>47.79</td><td class="bb">63.76</td><td>37.52</td><td>46.60</td><td class="bb">63.81</td><td>40.14</td><td>40.73</td><td>51.30</td><td>1.38</td></tr>
+      <tr><td>CrossRAG</td><td>68.21</td><td>43.95</td><td>61.14</td><td>37.81</td><td>44.75</td><td>60.16</td><td>38.13</td><td>42.87</td><td>49.63</td><td>1.29</td></tr>
+      <tr><td>DKM-RAG</td><td>69.13</td><td>42.69</td><td>62.12</td><td>35.13</td><td>43.90</td><td>61.13</td><td>39.49</td><td>38.88</td><td>49.06</td><td>3.80</td></tr>
+      <tr><td>QTT-RAG</td><td class="bb">70.11</td><td>46.44</td><td>63.02</td><td>37.68</td><td>46.94</td><td>62.79</td><td>44.13</td><td>42.12</td><td>51.65</td><td>1.80</td></tr>
+      <tr class="lh"><td colspan="11">Query Level</td></tr>
+      <tr><td>Eng. Translation</td><td>—</td><td class="uu">55.14</td><td>61.94</td><td class="uu">59.53</td><td class="uu">59.29</td><td>60.72</td><td class="uu">54.57</td><td class="uu">60.46</td><td class="uu">58.81</td><td class="uu">1.17</td></tr>
+      <tr class="ours"><td><b>DELTA (Ours)</b></td><td>63.85</td><td class="bb">62.55</td><td class="uu">63.03</td><td class="bb">62.59</td><td class="bb">62.38</td><td class="uu">62.86</td><td class="bb">63.26</td><td class="bb">62.51</td><td class="bb">62.88</td><td class="bb">1.13</td></tr>
+      <tr class="mh"><td colspan="11">Gemini-2.5-Flash</td></tr>
+      <tr class="lh"><td colspan="11">Document Level</td></tr>
+      <tr><td>MultiRAG</td><td>58.26</td><td>40.79</td><td>55.11</td><td>30.81</td><td>44.26</td><td>53.52</td><td>35.97</td><td>31.65</td><td>43.80</td><td class="uu">1.53</td></tr>
+      <tr><td>CrossRAG</td><td>63.40</td><td>41.87</td><td>57.24</td><td>29.74</td><td>44.14</td><td class="uu">56.80</td><td>36.09</td><td>32.49</td><td>45.22</td><td>2.60</td></tr>
+      <tr><td>DKM-RAG</td><td class="uu">64.21</td><td>39.41</td><td class="bb">59.26</td><td>31.34</td><td>43.45</td><td class="bb">57.74</td><td>37.26</td><td>33.64</td><td>45.79</td><td>5.63</td></tr>
+      <tr><td>QTT-RAG</td><td class="bb">65.32</td><td>42.64</td><td class="uu">57.81</td><td>31.56</td><td>45.18</td><td>56.27</td><td>40.65</td><td>35.97</td><td>46.93</td><td>5.55</td></tr>
+      <tr class="lh"><td colspan="11">Query Level</td></tr>
+      <tr><td>Eng. Translation</td><td>—</td><td class="uu">48.44</td><td>55.84</td><td class="uu">53.59</td><td class="uu">53.68</td><td>55.17</td><td class="uu">47.67</td><td class="uu">54.86</td><td class="uu">52.75</td><td>1.55</td></tr>
+      <tr class="ours"><td><b>DELTA (Ours)</b></td><td>56.97</td><td class="bb">56.45</td><td>55.95</td><td class="bb">55.83</td><td class="bb">56.18</td><td>55.98</td><td class="bb">56.44</td><td class="bb">56.45</td><td class="bb">56.28</td><td class="bb">1.48</td></tr>
+      <tr class="mh"><td colspan="11">DeepSeek-v3.1</td></tr>
+      <tr class="lh"><td colspan="11">Document Level</td></tr>
+      <tr><td>MultiRAG</td><td>60.77</td><td>43.64</td><td>56.22</td><td>33.14</td><td>44.72</td><td>54.16</td><td>34.21</td><td>36.80</td><td>45.46</td><td>2.56</td></tr>
+      <tr><td>CrossRAG</td><td>67.83</td><td>48.34</td><td class="uu">62.24</td><td>39.05</td><td>49.27</td><td class="uu">61.33</td><td>39.85</td><td>45.70</td><td>51.70</td><td>2.64</td></tr>
+      <tr><td>DKM-RAG</td><td class="uu">67.84</td><td>44.07</td><td class="bb">62.49</td><td>37.63</td><td>45.66</td><td class="bb">61.65</td><td>40.30</td><td>40.38</td><td>50.00</td><td>2.39</td></tr>
+      <tr><td>QTT-RAG</td><td class="bb">68.28</td><td>46.13</td><td>61.81</td><td>37.24</td><td>47.36</td><td>60.48</td><td>41.06</td><td>41.29</td><td>50.46</td><td class="uu">1.93</td></tr>
+      <tr class="lh"><td colspan="11">Query Level</td></tr>
+      <tr><td>Eng. Translation</td><td>—</td><td class="uu">50.97</td><td>58.32</td><td class="uu">56.11</td><td class="uu">56.52</td><td>56.92</td><td class="uu">50.49</td><td class="bb">57.52</td><td class="uu">55.26</td><td>2.05</td></tr>
+      <tr class="ours"><td><b>DELTA (Ours)</b></td><td>59.85</td><td class="bb">59.46</td><td>58.61</td><td class="bb">59.67</td><td class="bb">59.02</td><td>59.25</td><td class="bb">53.51</td><td class="uu">56.45</td><td class="bb">58.23</td><td class="bb">1.13</td></tr>
+    </tbody>
+  </table></div>
+  <div class="tn"><b>Table 1.</b> End-to-end mRAG (char 3-gram recall). <b>Bold</b>=best, <u>underline</u>=2nd. Yellow=DELTA.</div>
+  <div class="co b" style="margin-top:24px"><b>Key Results:</b> DELTA achieves the <b>best average across all three generators</b>, outperforming document-level methods. Gains are largest on <b>non-Latin scripts</b> (ar, zh, ja, ko, th), and DELTA is the <b>fastest method</b>.</div>
+</div></section>
 
-    <div class="content">
-      <p>
-        English pivoting—translating non-English queries into English before retrieval—is a dominant mRAG strategy. Prior work attributes this advantage to English-centric LLM capabilities. We challenge this assumption and show that the gains stem from <strong>retrieval-side structural biases</strong>, not intrinsic model preference.
-      </p>
-    </div>
-
-    <figure style="margin:1.5rem 0;">
-      <img src="./static/images/fig_motivation.png" alt="Common causes of language preference in mRAG" style="width:100%; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,0.1);">
-      <figcaption class="figure-caption">
-        <strong>Figure 1.</strong> Common causes of language preference in mRAG: gold-availability prior and cultural prior.
-      </figcaption>
-    </figure>
-
-    <div class="columns" style="margin-top:1.5rem;">
-      <div class="column">
-        <div class="prior-card">
-          <div><span class="pname">📊 Exposure Bias</span></div>
-          <p style="margin-top:0.5rem; font-size:0.93em;">High-resource corpora (especially English) dominate the top retrieval results regardless of the encoder's linguistic intent—a "popularity bias" of the datastore that artificially inflates English performance.</p>
-        </div>
-      </div>
-      <div class="column">
-        <div class="prior-card">
-          <div><span class="pname">📌 Gold Availability Prior</span></div>
-          <p style="margin-top:0.5rem; font-size:0.93em;">For a vast majority of benchmark queries, English Wikipedia is the <em>sole repository</em> of ground-truth information. Retrieval is structurally forced into English—not because of model preference, but because local-language gold simply doesn't exist.</p>
-        </div>
-      </div>
-      <div class="column">
-        <div class="prior-card">
-          <div><span class="pname">🌏 Cultural Prior</span></div>
-          <p style="margin-top:0.5rem; font-size:0.93em;">Locale-tied queries contain native surface forms (titles, aliases, scripts) that act as retrieval anchors. A language may appear "preferred" simply because the benchmark overrepresents topics from that locale—not due to intrinsic model tendency.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="highlight-box">
-      <strong>Key Finding:</strong> On MKQA, for non-English languages like Arabic and Korean, over <strong>65% of gold passages exist only in English Wikipedia</strong>. English pivoting works not because of linguistic superiority—it's because the evidence only exists in English.
-    </div>
-  </div>
-</section>
-
-<!-- DeLP -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 section-title">📐 DeLP: Debiased Language Preference</h2>
-
-    <div class="content">
-      <p>
-        To reveal the intrinsic preference of mRAG systems, we propose <strong>DeLP</strong>—a calibrated measurement that explicitly regresses out structural confounds via ridge regression. DeLP treats the residual signal as the true, debiased preference of the model.
-      </p>
-    </div>
-
-    <figure style="margin:1.5rem 0;">
-      <img src="./static/images/fig_delp.png" alt="DeLP overview" style="width:100%; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,0.1);">
-      <figcaption class="figure-caption">
-        <strong>Figure 2.</strong> Overview of DeLP, which measures intrinsic language preference in mRAG by regressing out exposure, gold-availability, and cultural priors from raw preference signals.
-      </figcaption>
-    </figure>
-
-    <div class="content" style="margin-top:1.5rem;">
-      <h3 class="title is-5">How DeLP Works</h3>
-      <p>For each language pair \((L_q, L_d)\), we construct a prior feature vector \(\phi(L_q, L_d)\) stacking interpretable covariates:</p>
-      <ul style="font-size:0.93em;">
-        <li>\(p_\text{ret}(L_d \mid L_q)\) — exposure prior (log-transformed)</li>
-        <li>\(p_\text{db}(L_d)\) — corpus-size prior</li>
-        <li>\(\ell(L_d)\) — passage-length statistic</li>
-        <li>\(p_\text{gold}(L_q, L_d)\) — gold-availability prior</li>
-        <li>\(p_\text{cult}(L_d)\) — cultural prior</li>
-        <li>\(\mathbb{I}[L_q = L_d]\) — monolingual alignment indicator</li>
-      </ul>
-      <p>
-        We fit a <strong>ridge regression</strong> per encoder to predict raw scores from priors, then use the <strong>residual</strong> as the debiased preference:
-        \[ \mathrm{DeLP}_e(L_q, L_d) = s_e(L_q, L_d) - \phi(L_q, L_d)^\top \hat\beta_e + \mu_e \]
-      </p>
-    </div>
-
-    <div class="highlight-box">
-      <strong>🎯 Emergence of Monolingual Alignment:</strong> After calibration, the strongest signal consistently moves to the diagonal (\(L_q = L_d\)). The previously dominant English preference largely disappears — revealing that <strong>retrievers fundamentally favor monolingual alignment</strong>. Much of the apparent English preference was an artifact of structural priors.
-    </div>
-
-    <div class="content" style="margin-top:1.5rem;">
-      <p>We validate DeLP by computing correlations between preference scores and priors before vs. after calibration. Raw scores (MLRS) are highly correlated with all three priors. After applying DeLP, these correlations <strong>drop sharply</strong>, confirming that DeLP effectively decouples intrinsic model tendencies from structural signals.</p>
-    </div>
-  </div>
-</section>
-
-<!-- DELTA -->
-<section class="section" style="background:#f8faff;">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 section-title">⚡ DELTA: Preference-Aligned Query Fusion</h2>
-
-    <div class="content">
-      <p>
-        Building on the discovery of monolingual alignment, we introduce <strong>DELTA</strong> (<strong>DE</strong>biased <strong>L</strong>anguage preference–guided <strong>T</strong>ext <strong>A</strong>ugmentation)—a lightweight, query-level mRAG solution. DELTA fuses global and local cues into a single preference-aligned query with <strong>no corpus or retriever modifications</strong>.
-      </p>
-    </div>
-
-    <figure style="margin:1.5rem 0;">
-      <img src="./static/images/fig_delta.png" alt="DELTA query fusion overview" style="width:100%; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,0.1);">
-      <figcaption class="figure-caption">
-        <strong>Figure 3.</strong> Overview of DELTA query fusion. DELTA fuses global and local query segments into a single preference-aligned query using lightweight repetition-based weighting.
-      </figcaption>
-    </figure>
-
-    <h3 class="title is-5" style="margin-top:1.5rem;">Fused Query Structure</h3>
-    <p style="font-size:0.93em; margin-bottom:0.75rem;">Given a local query \(q_\text{local}\), DELTA constructs a fused query \(Q_\text{fused}\) from five segments:</p>
-    <div class="seg-block"><span class="seg-label">[GLOB]</span> — English pivot query \(q_\text{glob}\) for broad coverage</div>
-    <div class="seg-block"><span class="seg-label">[LOCAL]</span> — Original native-language query to leverage monolingual alignment</div>
-    <div class="seg-block"><span class="seg-label">[TITLE_BRIDGE]</span> — Paired canonical titles \((t_\text{glob}, t_\text{loc})\) for cross-lingual entity mapping</div>
-    <div class="seg-block"><span class="seg-label">[ALIASES]</span> — Global/local aliases as stable retrieval anchors</div>
-    <div class="seg-block"><span class="seg-label">[LOCALE_HINT]</span> — Region/disambiguation hint</div>
-
-    <h3 class="title is-5" style="margin-top:1.5rem;">Repetition-Based Weighting</h3>
-    <div class="content">
-      <p style="font-size:0.93em;">
-        DELTA infers a cultural cue \((y, c, L_\text{loc})\)—whether the query is culture-specific, confidence score, and locale language—then dynamically adjusts segment repetition:
-      </p>
-      <ul style="font-size:0.93em;">
-        <li><strong>Culture-specific + high confidence</strong> → upweight <code>[LOCAL]</code> (up to 3×) to preserve native surface-form anchors</li>
-        <li><strong>Non-culture-specific</strong> → mildly favor <code>[GLOB]</code> (2×) for robust English back-off</li>
-        <li>High-confidence culture-specific queries also duplicate <code>[TITLE_BRIDGE]</code> and <code>[ALIASES]</code> for stronger entity grounding</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- Experiments -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 section-title">📈 Experiments</h2>
-
-    <div class="content">
-      <p><strong>Setup:</strong> MKQA benchmark · BGE-m3 retriever/re-ranker · Top-50 retrieval → re-rank → Top-5 for generation · Character 3-gram recall metric · Generators: Qwen3-235B, Gemini-2.5-Flash, DeepSeek-v3.1</p>
-    </div>
-
-    <!-- Main results -->
-    <div class="table-container" style="overflow-x:auto; margin:1.5rem 0;">
-      <table class="table is-bordered is-hoverable result-table" style="width:100%;">
-        <thead>
-          <tr style="background:#2366d1; color:white;">
-            <th style="color:white;">Method</th>
-            <th style="color:white;">en</th>
-            <th style="color:white;">ar</th>
-            <th style="color:white;">es</th>
-            <th style="color:white;">zh</th>
-            <th style="color:white;">ja</th>
-            <th style="color:white;">de</th>
-            <th style="color:white;">ko</th>
-            <th style="color:white;">th</th>
-            <th style="color:white;">AVG ↑</th>
-            <th style="color:white;">Latency ↓</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Qwen -->
-          <tr class="model-row"><td colspan="11">Qwen3-235B</td></tr>
-          <tr class="doc-row"><td colspan="11">Document Level</td></tr>
-          <tr><td>MultiRAG</td><td><span class="second">70.05</span></td><td>47.79</td><td class="best">63.76</td><td>37.52</td><td>46.60</td><td class="best">63.81</td><td>40.14</td><td>40.73</td><td>51.30</td><td>1.38</td></tr>
-          <tr><td>CrossRAG</td><td>68.21</td><td>43.95</td><td>61.14</td><td>37.81</td><td>44.75</td><td>60.16</td><td>38.13</td><td>42.87</td><td>49.63</td><td>1.29</td></tr>
-          <tr><td>DKM-RAG</td><td>69.13</td><td>42.69</td><td>62.12</td><td>35.13</td><td>43.90</td><td>61.13</td><td>39.49</td><td>38.88</td><td>49.06</td><td>3.80</td></tr>
-          <tr><td>QTT-RAG</td><td class="best">70.11</td><td>46.44</td><td>63.02</td><td>37.68</td><td>46.94</td><td>62.79</td><td>44.13</td><td>42.12</td><td>51.65</td><td>1.80</td></tr>
-          <tr class="doc-row"><td colspan="11">Query Level</td></tr>
-          <tr><td>English Translation</td><td>—</td><td><span class="second">55.14</span></td><td>61.94</td><td><span class="second">59.53</span></td><td><span class="second">59.29</span></td><td>60.72</td><td><span class="second">54.57</span></td><td><span class="second">60.46</span></td><td><span class="second">58.81</span></td><td><span class="second">1.17</span></td></tr>
-          <tr class="ours-row"><td><strong>DELTA (Ours)</strong></td><td>63.85</td><td class="best">62.55</td><td><span class="second">63.03</span></td><td class="best">62.59</td><td class="best">62.38</td><td><span class="second">62.86</span></td><td class="best">63.26</td><td class="best">62.51</td><td class="best">62.88</td><td class="best">1.13</td></tr>
-          <!-- Gemini -->
-          <tr class="model-row"><td colspan="11">Gemini-2.5-Flash</td></tr>
-          <tr class="doc-row"><td colspan="11">Document Level</td></tr>
-          <tr><td>MultiRAG</td><td>58.26</td><td>40.79</td><td>55.11</td><td>30.81</td><td>44.26</td><td>53.52</td><td>35.97</td><td>31.65</td><td>43.80</td><td><span class="second">1.53</span></td></tr>
-          <tr><td>CrossRAG</td><td>63.40</td><td>41.87</td><td>57.24</td><td>29.74</td><td>44.14</td><td><span class="second">56.80</span></td><td>36.09</td><td>32.49</td><td>45.22</td><td>2.60</td></tr>
-          <tr><td>DKM-RAG</td><td><span class="second">64.21</span></td><td>39.41</td><td class="best">59.26</td><td>31.34</td><td>43.45</td><td class="best">57.74</td><td>37.26</td><td>33.64</td><td>45.79</td><td>5.63</td></tr>
-          <tr><td>QTT-RAG</td><td class="best">65.32</td><td>42.64</td><td><span class="second">57.81</span></td><td>31.56</td><td>45.18</td><td>56.27</td><td>40.65</td><td>35.97</td><td>46.93</td><td>5.55</td></tr>
-          <tr class="doc-row"><td colspan="11">Query Level</td></tr>
-          <tr><td>English Translation</td><td>—</td><td><span class="second">48.44</span></td><td>55.84</td><td><span class="second">53.59</span></td><td><span class="second">53.68</span></td><td>55.17</td><td><span class="second">47.67</span></td><td><span class="second">54.86</span></td><td><span class="second">52.75</span></td><td>1.55</td></tr>
-          <tr class="ours-row"><td><strong>DELTA (Ours)</strong></td><td>56.97</td><td class="best">56.45</td><td>55.95</td><td class="best">55.83</td><td class="best">56.18</td><td>55.98</td><td class="best">56.44</td><td class="best">56.45</td><td class="best">56.28</td><td class="best">1.48</td></tr>
-          <!-- DeepSeek -->
-          <tr class="model-row"><td colspan="11">DeepSeek-v3.1</td></tr>
-          <tr class="doc-row"><td colspan="11">Document Level</td></tr>
-          <tr><td>MultiRAG</td><td>60.77</td><td>43.64</td><td>56.22</td><td>33.14</td><td>44.72</td><td>54.16</td><td>34.21</td><td>36.80</td><td>45.46</td><td>2.56</td></tr>
-          <tr><td>CrossRAG</td><td>67.83</td><td>48.34</td><td><span class="second">62.24</span></td><td>39.05</td><td>49.27</td><td><span class="second">61.33</span></td><td>39.85</td><td>45.70</td><td>51.70</td><td>2.64</td></tr>
-          <tr><td>DKM-RAG</td><td><span class="second">67.84</span></td><td>44.07</td><td class="best">62.49</td><td>37.63</td><td>45.66</td><td class="best">61.65</td><td>40.30</td><td>40.38</td><td>50.00</td><td>2.39</td></tr>
-          <tr><td>QTT-RAG</td><td class="best">68.28</td><td>46.13</td><td>61.81</td><td>37.24</td><td>47.36</td><td>60.48</td><td>41.06</td><td>41.29</td><td>50.46</td><td><span class="second">1.93</span></td></tr>
-          <tr class="doc-row"><td colspan="11">Query Level</td></tr>
-          <tr><td>English Translation</td><td>—</td><td><span class="second">50.97</span></td><td>58.32</td><td><span class="second">56.11</span></td><td><span class="second">56.52</span></td><td>56.92</td><td><span class="second">50.49</span></td><td class="best">57.52</td><td><span class="second">55.26</span></td><td>2.05</td></tr>
-          <tr class="ours-row"><td><strong>DELTA (Ours)</strong></td><td>59.85</td><td class="best">59.46</td><td>58.61</td><td class="best">59.67</td><td class="best">59.02</td><td>59.25</td><td class="best">53.51</td><td><span class="second">56.45</span></td><td class="best">58.23</td><td class="best">1.13</td></tr>
-        </tbody>
-      </table>
-      <p style="font-size:0.82em; color:#777; text-align:center;">Table 1. End-to-end mRAG performance (character 3-gram recall). 🟡 = DELTA (Ours). <strong>Bold</strong> = best; <span class="second" style="font-size:1em;">underline</span> = second best per generator.</p>
-    </div>
-
-    <div class="highlight-box">
-      <strong>💡 Key Results:</strong> DELTA achieves the <strong>best average performance across all three generators</strong>, outperforming both English pivoting and expensive document-level frameworks (MultiRAG, CrossRAG, DKM-RAG, QTT-RAG) that require much higher computational cost. Gains are particularly pronounced on <strong>non-Latin script languages</strong> (ar, zh, ja, ko, th). DELTA is also the <strong>fastest method</strong> due to single-query retrieval with no document translation.
-    </div>
-
-    <figure style="margin:2rem 0;">
-      <img src="./static/images/fig_latency.png" alt="Latency analysis" style="width:100%; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,0.1);">
-      <figcaption class="figure-caption">
-        <strong>Figure 4.</strong> Generation time per query (averaged over languages) across generators and methods. DELTA maintains high efficiency by generating a single fused query and avoiding document translation.
-      </figcaption>
-    </figure>
-  </div>
-</section>
-
-<!-- BibTeX -->
-<section class="section" id="BibTeX">
-  <div class="container is-max-desktop content">
-    <h2 class="title is-3 section-title">BibTeX</h2>
-    <div class="bibtex-box">@inproceedings{park2026delta,
-  title     = {Enhancing Multilingual {RAG} Systems with Debiased Language
-               Preference-Guided Query Fusion},
-  author    = {Park, Jeonghyun and Kim, Byeongjeong and Hwang, Seojin and Lee, Hwanhee},
-  booktitle = {Proceedings of the 64th Annual Meeting of the Association for
-               Computational Linguistics (ACL)},
+<section class="sh"><div class="w">
+  <h2>BibTeX</h2>
+  <div class="bib"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.textContent);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)">Copy</button><code>@inproceedings{park2026delta,
+  title     = {Enhancing Multilingual {RAG} Systems with Debiased
+               Language Preference-Guided Query Fusion},
+  author    = {Park, Jeonghyun and Kim, Byeongjeong and
+               Hwang, Seojin and Lee, Hwanhee},
+  booktitle = {Findings of the Association for Computational
+               Linguistics: ACL 2026},
   year      = {2026}
-}</div>
-  </div>
-</section>
+}</code></div>
+</div></section>
 
-<!-- Footer -->
-<footer class="footer">
-  <div class="container">
-    <div class="content has-text-centered">
-      <p>
-        This project page is based on the template from
-        <a href="https://github.com/nerfies/nerfies.github.io" target="_blank">Nerfies</a>
-        and adapted from
-        <a href="https://hamin2065.github.io/AMIS_project_page/" target="_blank">AMIS project page</a>.
-      </p>
-      <p>
-        <a href="https://ai.cau.ac.kr/" target="_blank">Department of Artificial Intelligence, Chung-Ang University</a>
-      </p>
-    </div>
-  </div>
-</footer>
-
+<footer><a href="https://ai.cau.ac.kr/" target="_blank">Department of Artificial Intelligence, Chung-Ang University</a></footer>
 </body>
 </html>
